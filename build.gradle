@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+}
+
+group = 'pl.vishop'
+version = '1.0'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+}
+
+dependencies {
+    compileOnly 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'org.json:json:20211205'
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+shadowJar {
+    //minimize()
+
+    dependencies {
+        exclude(dependency('org.jetbrains:annotations'))
+    }
+
+    relocate 'kotlin', 'lib.kotlin'
+    relocate 'okhttp3', 'lib.okhttp3'
+    relocate 'okio', 'lib.okio'
+    relocate 'org.json', 'lib.json'
+
+    archiveFileName = "${rootProject.name} v${archiveVersion.get()}.${archiveExtension.get()}"
+}

@@ -1,0 +1,12 @@
+# Klucz API do autoryzacji połączeń
+apiKey: ""
+
+# ID sklepu
+shopId: ""
+
+# ID serwera w sklepie
+serverId: ""
+
+# Co ile ticków mają być pobierane zamówienia ze sklepu
+# 1 sekunda = 20 ticków
+taskInterval: 600
