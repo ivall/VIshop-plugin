@@ -62,6 +62,11 @@ public final class PendingRequester {
 
                 final UUID orderId = UUID.fromString(order.getString("id"));
                 final String player = order.getString("player");
+                final boolean requirePlayerOnline = order.getJSONObject("product").getBoolean("require_player_online");
+                if (Bukkit.getServer().getPlayer(player) == null && requirePlayerOnline) {
+                    Bukkit.getLogger().warning("Nieudane wykonanie zamówienia "+ orderId +". Gracz nie jest na serwerze.");
+                    continue;
+                }
                 final List<String> commands = new ArrayList<>();
 
                 final JSONArray commandsArray = order.getJSONObject("product").getJSONArray("commands");
