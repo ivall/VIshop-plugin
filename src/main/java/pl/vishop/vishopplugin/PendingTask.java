@@ -46,10 +46,8 @@ public class PendingTask implements Runnable {
 
         pendingOrders.stream()
                 .filter(order -> !order.requiresOnline() || Bukkit.getPlayerExact(order.getPlayer()) != null)
-                .forEach(order -> {
-                    this.executeCommands(order);
-                    ConfirmRequester.post(this.httpClient, this.config, order);
-                });
+                .filter(order -> ConfirmRequester.post(this.httpClient, this.config, order))
+                .forEach(this::executeCommands);
     }
 
     private void executeCommands(final Order order) {

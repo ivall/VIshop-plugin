@@ -34,7 +34,7 @@ public final class ConfirmRequester {
 
     private ConfirmRequester() {}
 
-    public static void post(final OkHttpClient httpClient, final Config config, final Order order) {
+    public static boolean post(final OkHttpClient httpClient, final Config config, final Order order) {
         final Request request = new Builder()
                 .url(getUrl(config, order))
                 .header("User-Agent", "ViShopPlugin/1.0")
@@ -46,10 +46,14 @@ public final class ConfirmRequester {
             if (!response.isSuccessful()) {
                 throw new IOException("Otrzymany kod odpowiedzi " + response.code());
             }
+
+            return true;
         } catch (final IOException | JSONException exception) {
             Bukkit.getLogger().warning("Nieudane potwierdzenie zamówienia " + order.getOrderId().toString() + " w ViShop:");
             Bukkit.getLogger().warning(exception.getMessage());
         }
+
+        return false;
     }
 
     private static String getUrl(final Config config, final Order order) {
