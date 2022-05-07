@@ -44,14 +44,17 @@ public class PendingTask implements Runnable {
             return;
         }
 
-        Bukkit.getScheduler().runTask(this.plugin, () -> {
-            pendingOrders.forEach(order -> {
-                order.getCommands().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
-            });
-        });
+        pendingOrders.stream()
+                .filter(order -> !order.requiresOnline() || Bukkit.getPlayerExact(order.getPlayer()) != null)
+                .forEach(order -> {
+                    this.executeCommands(order);
+                    ConfirmRequester.post(this.httpClient, this.config, order);
+                });
+    }
 
-        pendingOrders.forEach(order -> {
-            ConfirmRequester.post(this.httpClient, this.config, order);
+    private void executeCommands(final Order order) {
+        Bukkit.getScheduler().runTask(this.plugin, () -> {
+            order.getCommands().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
         });
     }
 
