@@ -82,7 +82,7 @@ public final class PendingRequester {
     }
 
     private static String getUrl(final Config config) {
-        return "https://dev123.vishop.pl/panel/shops/" + config.shopId + "/servers/" + config.serverId + "/payments/?status=executing";
+        return "https://vishop.pl/panel/shops/" + config.shopId + "/servers/" + config.serverId + "/payments/?status=executing";
     }
 
 }

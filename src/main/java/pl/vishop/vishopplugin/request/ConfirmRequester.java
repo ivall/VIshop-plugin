@@ -53,8 +53,7 @@ public final class ConfirmRequester {
     }
 
     private static String getUrl(final Config config, final Order order) {
-        return "https://dev123.vishop.pl/panel/shops/" + config.shopId + "/servers/" + config.serverId + "/payments/"
-                + order.getOrderId().toString() + "/";
+        return "https://vishop.pl/panel/shops/" + config.shopId + "/servers/" + config.serverId + "/payments/" + order.getOrderId().toString() + "/";
     }
 
 }
