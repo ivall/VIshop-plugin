@@ -31,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import pl.vishop.vishopplugin.ViShopPlugin;
 import pl.vishop.vishopplugin.config.Config;
 import pl.vishop.vishopplugin.order.Order;
 
@@ -82,7 +83,7 @@ public final class PendingRequester {
     }
 
     private static String getUrl(final Config config) {
-        return "https://vishop.pl/panel/shops/" + config.shopId + "/servers/" + config.serverId + "/payments/?status=executing";
+        return String.format(ViShopPlugin.BACKEND_ADDRESS, config.shopId, config.serverId, "?status=executing");
     }
 
 }

@@ -23,6 +23,7 @@ import pl.vishop.vishopplugin.config.Config;
 
 public final class ViShopPlugin extends JavaPlugin {
 
+    public static final String BACKEND_ADDRESS = "https://dev123.vishop.pl/panel/shops/%1$s/servers/%2$s/payments/%3$s";
     private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
 
     @Override

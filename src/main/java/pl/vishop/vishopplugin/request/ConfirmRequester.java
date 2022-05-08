@@ -25,6 +25,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.bukkit.Bukkit;
 import org.json.JSONException;
+import pl.vishop.vishopplugin.ViShopPlugin;
 import pl.vishop.vishopplugin.config.Config;
 import pl.vishop.vishopplugin.order.Order;
 
@@ -57,7 +58,7 @@ public final class ConfirmRequester {
     }
 
     private static String getUrl(final Config config, final Order order) {
-        return "https://vishop.pl/panel/shops/" + config.shopId + "/servers/" + config.serverId + "/payments/" + order.getOrderId().toString() + "/";
+        return String.format(ViShopPlugin.BACKEND_ADDRESS, config.shopId, config.serverId, order.getOrderId().toString() + "/");
     }
 
 }
