@@ -1,4 +1,5 @@
 # VIshop-plugin
-Plugin for Minecraft itemshop - VIshop.pl
+Plugin łączący serwer Minecraft z itemshopem stworzonym na [VIshop.pl](https://vishop.pl/)</br>
+Plugin przeznaczony dla silników pochodnych Bukkita (Spigota, Papera, itp.)
 
-Author of plugin: Author of plugin: [Kamilkime](https://github.com/Kamilkime)
+Autor pluginu: [Kamilkime](https://github.com/Kamilkime)

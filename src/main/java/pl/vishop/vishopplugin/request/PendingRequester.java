@@ -31,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import pl.vishop.vishopplugin.ViShopPlugin;
 import pl.vishop.vishopplugin.config.Config;
 import pl.vishop.vishopplugin.order.Order;
 
@@ -59,22 +60,19 @@ public final class PendingRequester {
             final JSONArray orders = new JSONArray(responseBody.string());
             for (int i = 0; i < orders.length(); i++) {
                 final JSONObject order = orders.getJSONObject(i);
+                final JSONObject product = order.getJSONObject("product");
 
                 final UUID orderId = UUID.fromString(order.getString("id"));
                 final String player = order.getString("player");
-                final boolean requirePlayerOnline = order.getJSONObject("product").getBoolean("require_player_online");
-                if (Bukkit.getServer().getPlayer(player) == null && requirePlayerOnline) {
-                    Bukkit.getLogger().warning("Nieudane wykonanie zamówienia "+ orderId +". Gracz nie jest na serwerze.");
-                    continue;
-                }
+                final boolean requireOnline = product.getBoolean("require_player_online");
                 final List<String> commands = new ArrayList<>();
 
-                final JSONArray commandsArray = order.getJSONObject("product").getJSONArray("commands");
+                final JSONArray commandsArray = product.getJSONArray("commands");
                 for (int j = 0; j < commandsArray.length(); j++) {
                     commands.add(commandsArray.getString(j));
                 }
 
-                pendingOrders.add(new Order(orderId, player, commands));
+                pendingOrders.add(new Order(orderId, player, requireOnline, commands));
             }
         } catch (final IOException | JSONException exception) {
             Bukkit.getLogger().warning("Nieudane pobranie oczekujących zamówień z ViShop:");
@@ -85,7 +83,7 @@ public final class PendingRequester {
     }
 
     private static String getUrl(final Config config) {
-        return "https://dev123.vishop.pl/panel/shops/" + config.shopId + "/servers/" + config.serverId + "/payments/?status=executing";
+        return String.format(ViShopPlugin.BACKEND_ADDRESS, config.shopId, config.serverId, "?status=executing");
     }
 
 }

@@ -9,11 +9,13 @@ public class Order {
 
     private final UUID orderId;
     private final String player;
+    private final boolean requireOnline;
     private final List<String> commands;
 
-    public Order(final UUID orderId, final String player, final List<String> commands) {
+    public Order(final UUID orderId, final String player, final boolean requireOnline, final List<String> commands) {
         this.orderId = orderId;
         this.player = player;
+        this.requireOnline = requireOnline;
         this.commands = commands;
     }
 
@@ -23,6 +25,10 @@ public class Order {
 
     public String getPlayer() {
         return this.player;
+    }
+
+    public boolean requiresOnline() {
+        return this.requireOnline;
     }
 
     public List<String> getCommands() {

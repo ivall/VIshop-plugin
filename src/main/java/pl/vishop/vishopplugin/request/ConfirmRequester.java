@@ -25,6 +25,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.bukkit.Bukkit;
 import org.json.JSONException;
+import pl.vishop.vishopplugin.ViShopPlugin;
 import pl.vishop.vishopplugin.config.Config;
 import pl.vishop.vishopplugin.order.Order;
 
@@ -34,7 +35,7 @@ public final class ConfirmRequester {
 
     private ConfirmRequester() {}
 
-    public static void post(final OkHttpClient httpClient, final Config config, final Order order) {
+    public static boolean post(final OkHttpClient httpClient, final Config config, final Order order) {
         final Request request = new Builder()
                 .url(getUrl(config, order))
                 .header("User-Agent", "ViShopPlugin/1.0")
@@ -46,15 +47,18 @@ public final class ConfirmRequester {
             if (!response.isSuccessful()) {
                 throw new IOException("Otrzymany kod odpowiedzi " + response.code());
             }
+
+            return true;
         } catch (final IOException | JSONException exception) {
             Bukkit.getLogger().warning("Nieudane potwierdzenie zamówienia " + order.getOrderId().toString() + " w ViShop:");
             Bukkit.getLogger().warning(exception.getMessage());
         }
+
+        return false;
     }
 
     private static String getUrl(final Config config, final Order order) {
-        return "https://dev123.vishop.pl/panel/shops/" + config.shopId + "/servers/" + config.serverId + "/payments/"
-                + order.getOrderId().toString() + "/";
+        return String.format(ViShopPlugin.BACKEND_ADDRESS, config.shopId, config.serverId, order.getOrderId().toString() + "/");
     }
 
 }
