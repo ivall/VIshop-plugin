@@ -46,7 +46,7 @@ public class Config {
             return false;
         }
 
-        this.taskInterval = cfg.getLong("taskInterval", 600L);
+        this.taskInterval = 600L;
         return true;
     }
 
