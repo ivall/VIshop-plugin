@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'pl.vishop'
-version = '1.3'
+version = '1.4'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -16,12 +16,18 @@ repositories {
         name = 'spigotmc-repo'
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
+
+    maven {
+        name = 'spigotmc-bungee'
+        url = 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
 }
 
 dependencies {
     compileOnly 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'org.json:json:20211205'
+    compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT' // for hex messages, only on spigot
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'org.json:json:20220320'
 }
 
 processResources {

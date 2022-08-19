@@ -16,7 +16,6 @@
 
 package pl.vishop.vishopplugin;
 
-import java.util.Set;
 import okhttp3.OkHttpClient;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -24,6 +23,9 @@ import pl.vishop.vishopplugin.config.Config;
 import pl.vishop.vishopplugin.order.Order;
 import pl.vishop.vishopplugin.request.ConfirmRequester;
 import pl.vishop.vishopplugin.request.PendingRequester;
+
+import java.util.List;
+import java.util.Set;
 
 public class PendingTask implements Runnable {
 
@@ -52,8 +54,22 @@ public class PendingTask implements Runnable {
 
     private void executeCommands(final Order order) {
         Bukkit.getScheduler().runTask(this.plugin, () -> {
-            order.getCommands().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+            order.getCommands().forEach(command -> {
+                if (command.startsWith("#")) {
+                    List<String> messages = config.broadcastMessages.get(command.replaceAll("#", ""));
+                    if (messages == null) return;
+                    messages.forEach(msg -> Bukkit.broadcastMessage(translateMessage(msg, order)));
+
+                    return;
+                }
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            });
         });
+    }
+
+    private String translateMessage(String message, Order order) {
+        return message.replaceAll("\\{NICK}", order.getPlayer());
     }
 
 }

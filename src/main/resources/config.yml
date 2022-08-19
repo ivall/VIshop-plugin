@@ -6,3 +6,10 @@ shopId: ""
 
 # ID serwera w sklepie
 serverId: ""
+
+# Ogłoszenia o zakupie wyświetlane na chacie
+# Więcej informacji na stronie pluginu (github)
+broadcasts:
+  testowy-broadcast:
+    - 'Gracz &a{NICK} &fzakupił &eVIP''a &fw naszym sklepie!'
+    - ''

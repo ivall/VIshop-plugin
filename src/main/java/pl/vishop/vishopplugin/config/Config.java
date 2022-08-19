@@ -17,13 +17,21 @@
 package pl.vishop.vishopplugin.config;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Config {
 
     public String apiKey;
     public String shopId;
     public String serverId;
+    public Map<String, List<String>> broadcastMessages;
 
     public long taskInterval;
 
@@ -46,8 +54,42 @@ public class Config {
             return false;
         }
 
+        this.broadcastMessages = new HashMap<>();
+        ConfigurationSection broadcastSection = cfg.getConfigurationSection("broadcasts");
+        boolean isSpigot = false;
+        try {
+            Class.forName("net.md_5.bungee.api.ChatColor");
+            isSpigot = true;
+        } catch (ClassNotFoundException ignored) {}
+
+        boolean translateHex = isSpigot && (Bukkit.getServer().getVersion().contains("1.16") || Bukkit.getServer().getVersion().contains("1.17") || Bukkit.getServer().getVersion().contains("1.18") || Bukkit.getServer().getVersion().contains("1.19"));
+        broadcastSection.getKeys(false).forEach(id -> {
+            List<String> messages = broadcastSection.getStringList(id);
+            int i = 0;
+            for (String msg : messages) {
+                msg = ChatColor.translateAlternateColorCodes('&', msg);
+                if (translateHex) msg = translateHex(msg);
+                messages.set(i, msg);
+                i++;
+            }
+
+            this.broadcastMessages.put(id, messages);
+        });
+
         this.taskInterval = 600L;
         return true;
+    }
+
+    private static final Pattern hexPattern = Pattern.compile("&#[A-Fa-f0-9]{6}");;
+    private String translateHex(String message) {
+        Matcher matcher = hexPattern.matcher(message);
+        while (matcher.find()) {
+            String hex = message.substring(matcher.start(), matcher.end());
+            message = message.replace(hex, net.md_5.bungee.api.ChatColor.of(hex
+                    .replace("&", "")) + "");
+            matcher = hexPattern.matcher(message);
+        }
+        return message;
     }
 
 }
