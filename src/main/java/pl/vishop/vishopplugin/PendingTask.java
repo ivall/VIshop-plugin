@@ -16,24 +16,22 @@
 
 package pl.vishop.vishopplugin;
 
+import java.util.List;
+import java.util.Set;
 import okhttp3.OkHttpClient;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import pl.vishop.vishopplugin.config.Config;
 import pl.vishop.vishopplugin.order.Order;
 import pl.vishop.vishopplugin.request.ConfirmRequester;
 import pl.vishop.vishopplugin.request.PendingRequester;
 
-import java.util.List;
-import java.util.Set;
-
 public class PendingTask implements Runnable {
 
-    private final Plugin plugin;
+    private final ViShopPlugin plugin;
     private final OkHttpClient httpClient;
     private final Config config;
 
-    public PendingTask(final Plugin plugin, final OkHttpClient httpClient, final Config config) {
+    public PendingTask(final ViShopPlugin plugin, final OkHttpClient httpClient, final Config config) {
         this.plugin = plugin;
         this.httpClient = httpClient;
         this.config = config;
@@ -56,20 +54,18 @@ public class PendingTask implements Runnable {
         Bukkit.getScheduler().runTask(this.plugin, () -> {
             order.getCommands().forEach(command -> {
                 if (command.startsWith("#")) {
-                    List<String> messages = config.broadcastMessages.get(command.replaceAll("#", ""));
-                    if (messages == null) return;
-                    messages.forEach(msg -> Bukkit.broadcastMessage(translateMessage(msg, order)));
+                    List<String> messages = config.broadcastMessages.get(command.substring(1));
+                    if (messages == null) {
+                        return;
+                    }
 
+                    plugin.getBroadcastSender().broadcastMessages(messages);
                     return;
                 }
 
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             });
         });
-    }
-
-    private String translateMessage(String message, Order order) {
-        return message.replaceAll("\\{NICK}", order.getPlayer());
     }
 
 }

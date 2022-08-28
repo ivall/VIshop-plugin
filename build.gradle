@@ -18,16 +18,16 @@ repositories {
     }
 
     maven {
-        name = 'spigotmc-bungee'
-        url = 'https://oss.sonatype.org/content/repositories/snapshots'
+        name = 'minebench-repo'
+        url = 'https://repo.minebench.de'
     }
 }
 
 dependencies {
-    compileOnly 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
-    compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT' // for hex messages, only on spigot
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'org.json:json:20220320'
+    implementation 'de.themoep:minedown:1.7.1-SNAPSHOT'
 }
 
 processResources {
