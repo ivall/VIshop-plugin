@@ -17,6 +17,7 @@
 package pl.vishop.vishopplugin.config;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class Config {
@@ -30,19 +31,19 @@ public class Config {
     public boolean load(final ConfigurationSection cfg) {
         this.apiKey = cfg.getString("apiKey", "");
         if (this.apiKey.isEmpty()) {
-            Bukkit.getLogger().warning("Uzupełnij klucz API w configu, aby łączyć się ze swoim sklepem w ViShop");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Musisz uzupełnić klucz API w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
             return false;
         }
 
         this.shopId = cfg.getString("shopId", "");
         if (this.shopId.isEmpty()) {
-            Bukkit.getLogger().warning("Uzupełnij ID sklepu w configu, aby łączyć się ze swoim sklepem w ViShop");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Musisz uzupełnić ID sklepu w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
             return false;
         }
 
         this.serverId = cfg.getString("serverId", "");
         if (this.serverId.isEmpty()) {
-            Bukkit.getLogger().warning("Uzupełnij ID serwera w configu, aby łączyć się ze swoim sklepem w ViShop");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Musisz uzupełnić ID serwera w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
             return false;
         }
 
