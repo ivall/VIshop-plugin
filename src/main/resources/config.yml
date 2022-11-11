@@ -1,8 +1,11 @@
 # Klucz API do autoryzacji połączeń
+# Znajdziesz go wchodząc do panelu i wybierając zakładkę Ustawienia
 apiKey: ""
 
 # ID sklepu
+# Jest na głównej stronie panelu sklepu
 shopId: ""
 
 # ID serwera w sklepie
+# Znajduje się ono w zakładce Serwery w panelu
 serverId: ""

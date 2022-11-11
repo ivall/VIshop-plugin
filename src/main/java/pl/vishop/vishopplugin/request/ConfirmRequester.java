@@ -17,6 +17,8 @@
 package pl.vishop.vishopplugin.request;
 
 import java.io.IOException;
+
+import com.google.gson.JsonIOException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -24,7 +26,6 @@ import okhttp3.Request.Builder;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.bukkit.Bukkit;
-import org.json.JSONException;
 import pl.vishop.vishopplugin.ViShopPlugin;
 import pl.vishop.vishopplugin.config.Config;
 import pl.vishop.vishopplugin.order.Order;
@@ -49,7 +50,7 @@ public final class ConfirmRequester {
             }
 
             return true;
-        } catch (final IOException | JSONException exception) {
+        } catch (final IOException | JsonIOException exception) {
             Bukkit.getLogger().warning("Nieudane potwierdzenie zamówienia " + order.getOrderId().toString() + " w ViShop:");
             Bukkit.getLogger().warning(exception.getMessage());
         }
