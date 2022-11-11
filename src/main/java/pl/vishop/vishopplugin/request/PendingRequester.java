@@ -16,24 +16,19 @@
 
 package pl.vishop.vishopplugin.request;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import com.google.gson.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Request.Builder;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.bukkit.Bukkit;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import pl.vishop.vishopplugin.ViShopPlugin;
 import pl.vishop.vishopplugin.config.Config;
 import pl.vishop.vishopplugin.order.Order;
+
+import java.io.IOException;
+import java.util.*;
 
 public final class PendingRequester {
 
@@ -57,24 +52,27 @@ public final class PendingRequester {
                 throw new IOException("Puste body odpowiedzi");
             }
 
-            final JSONArray orders = new JSONArray(responseBody.string());
-            for (int i = 0; i < orders.length(); i++) {
-                final JSONObject order = orders.getJSONObject(i);
-                final JSONObject product = order.getJSONObject("product");
+            final JsonArray orders = JsonParser.parseString(responseBody.string()).getAsJsonArray();
 
-                final UUID orderId = UUID.fromString(order.getString("id"));
-                final String player = order.getString("player");
-                final boolean requireOnline = product.getBoolean("require_player_online");
+            for (Object value : orders)
+            {
+                final JsonObject order = (JsonObject) value;
+                final JsonObject product = (JsonObject) order.get("product");
+
+                final UUID orderId = UUID.fromString(order.get("id").getAsString());
+                final String player = order.get("player").getAsString();
+                final boolean requireOnline = product.get("require_player_online").getAsBoolean();
                 final List<String> commands = new ArrayList<>();
 
-                final JSONArray commandsArray = product.getJSONArray("commands");
-                for (int j = 0; j < commandsArray.length(); j++) {
-                    commands.add(commandsArray.getString(j));
+                final JsonArray commandsArray = (JsonArray) product.get("commands");
+                for (JsonElement o : commandsArray)
+                {
+                    commands.add(o.getAsString());
                 }
 
                 pendingOrders.add(new Order(orderId, player, requireOnline, commands));
             }
-        } catch (final IOException | JSONException exception) {
+        } catch (final IOException | JsonIOException exception) {
             Bukkit.getLogger().warning("Nieudane pobranie oczekujących zamówień z ViShop:");
             Bukkit.getLogger().warning(exception.getMessage());
         }
