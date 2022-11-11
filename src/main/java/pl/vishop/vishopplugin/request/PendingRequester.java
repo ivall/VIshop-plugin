@@ -16,7 +16,11 @@
 
 package pl.vishop.vishopplugin.request;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonIOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Request.Builder;
@@ -52,26 +56,25 @@ public final class PendingRequester {
                 throw new IOException("Puste body odpowiedzi");
             }
 
-            final JsonArray orders = JsonParser.parseString(responseBody.string()).getAsJsonArray();
+            final JsonArray orders = new JsonParser().parse(responseBody.string()).getAsJsonArray();
 
-            for (Object value : orders)
-            {
-                final JsonObject order = (JsonObject) value;
-                final JsonObject product = (JsonObject) order.get("product");
+            for (JsonElement value : orders) {
+                final JsonObject order = value.getAsJsonObject();
+                final JsonObject product = order.get("product").getAsJsonObject();
 
                 final UUID orderId = UUID.fromString(order.get("id").getAsString());
                 final String player = order.get("player").getAsString();
                 final boolean requireOnline = product.get("require_player_online").getAsBoolean();
                 final List<String> commands = new ArrayList<>();
 
-                final JsonArray commandsArray = (JsonArray) product.get("commands");
-                for (JsonElement o : commandsArray)
-                {
+                final JsonArray commandsArray = product.get("commands").getAsJsonArray();
+                for (JsonElement o : commandsArray) {
                     commands.add(o.getAsString());
                 }
 
                 pendingOrders.add(new Order(orderId, player, requireOnline, commands));
             }
+
         } catch (final IOException | JsonIOException exception) {
             Bukkit.getLogger().warning("Nieudane pobranie oczekujących zamówień z ViShop:");
             Bukkit.getLogger().warning(exception.getMessage());

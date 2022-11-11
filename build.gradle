@@ -23,7 +23,6 @@ repositories {
 dependencies {
     compileOnly 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
-    implementation 'com.google.code.gson:gson:2.10'
 }
 
 processResources {
@@ -45,7 +44,6 @@ shadowJar {
     relocate 'kotlin', 'lib.kotlin'
     relocate 'okhttp3', 'lib.okhttp3'
     relocate 'okio', 'lib.okio'
-    relocate 'com.google', 'lib.google'
 
     archiveFileName = "${rootProject.name} v${archiveVersion.get()}.${archiveExtension.get()}"
 }

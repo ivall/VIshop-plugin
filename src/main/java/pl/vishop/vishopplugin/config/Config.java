@@ -31,19 +31,19 @@ public class Config {
     public boolean load(final ConfigurationSection cfg) {
         this.apiKey = cfg.getString("apiKey", "");
         if (this.apiKey.isEmpty()) {
-            Bukkit.getLogger().warning(ChatColor.RED + "Musisz uzupełnić klucz API w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
+            Bukkit.getLogger().severe("Musisz uzupełnić klucz API w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
             return false;
         }
 
         this.shopId = cfg.getString("shopId", "");
         if (this.shopId.isEmpty()) {
-            Bukkit.getLogger().warning(ChatColor.RED + "Musisz uzupełnić klucz API w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
+            Bukkit.getLogger().severe("Musisz uzupełnić ID sklepu pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
             return false;
         }
 
         this.serverId = cfg.getString("serverId", "");
         if (this.serverId.isEmpty()) {
-            Bukkit.getLogger().warning(ChatColor.RED + "Musisz uzupełnić klucz API w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
+            Bukkit.getLogger().severe("Musisz uzupełnić ID serwera w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
             return false;
         }
 
