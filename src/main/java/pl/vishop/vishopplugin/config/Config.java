@@ -37,13 +37,13 @@ public class Config {
 
         this.shopId = cfg.getString("shopId", "");
         if (this.shopId.isEmpty()) {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Musisz uzupełnić klucz API w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Musisz uzupełnić ID sklepu w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
             return false;
         }
 
         this.serverId = cfg.getString("serverId", "");
         if (this.serverId.isEmpty()) {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Musisz uzupełnić klucz API w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Musisz uzupełnić ID serwera w pliku konfiguracyjnym, aby plugin działał. Wyłączam...");
             return false;
         }
 
