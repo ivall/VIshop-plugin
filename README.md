@@ -2,7 +2,7 @@
 Plugin łączący serwer Minecraft z itemshopem stworzonym na [VIshop.pl](https://vishop.pl/)
 
 Plugin przeznaczony dla platform:
-- pochodnych Bukkita (Spigota, Papera, itp.)
+- pochodnych Bukkita (Spigot, Paper, itp.)
 - pochodnych BungeeCorda (BungeeCord, Waterfall, itp.)
 - pochodnych Velocity
 
