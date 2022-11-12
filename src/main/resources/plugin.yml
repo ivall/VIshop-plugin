@@ -1,7 +1,0 @@
-name: ViShopPlugin
-version: '${version}'
-api-version: 1.13
-main: pl.vishop.vishopplugin.ViShopPlugin
-description: "Wykonuj zamówienia ze swojego sklepu ViShop"
-website: https://vishop.pl/
-author: "Kamilkime"
