@@ -46,7 +46,7 @@ public final class ConfirmOrderRequest extends ViShopRequest {
             if (!response.isSuccessful()) {
                 throw new RequestException("Otrzymany kod odpowiedzi " + response.code());
             }
-        } catch (final IOException exception) {
+        } catch (final Exception exception) {
             throw new RequestException(exception.getMessage());
         }
     }

@@ -18,7 +18,6 @@
 package pl.vishop.plugin.bungee;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -37,7 +36,7 @@ public class BungeeResourceLoader extends ResourceLoader<Configuration> {
     protected Configuration loadResource(final Path resourcePath) throws ResourceLoaderException {
         try {
             return ConfigurationProvider.getProvider(YamlConfiguration.class).load(resourcePath.toFile());
-        } catch (final IOException exception) {
+        } catch (final Exception exception) {
             throw new ResourceLoaderException(Reason.FILE_NOT_LOADED, exception);
         }
     }

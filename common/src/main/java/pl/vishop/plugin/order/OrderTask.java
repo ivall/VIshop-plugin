@@ -35,40 +35,38 @@ public abstract class OrderTask implements Runnable {
     }
 
     public abstract void logInfo(final String message);
+
     public abstract void logError(final String message);
+
     public abstract boolean isPlayerOnline(final String playerName);
+
     public abstract void executeCommand(final String command);
 
     @Override
     public void run() {
-        final Order[] pendingOrders;
-
         try {
-            pendingOrders = this.pendingOrderRequest.get();
+            Arrays.stream(this.pendingOrderRequest.get()).forEach(this::processOrder);
         } catch (final RequestException exception) {
             this.logError("Nieudane pobranie zamówień z ViShop");
             this.logError("Przyczyna: " + exception.getMessage());
+        }
+    }
+
+    private void processOrder(final Order order) {
+        if (order.requiresOnline() && !this.isPlayerOnline(order.getPlayer())) {
             return;
         }
 
-        if (pendingOrders.length == 0) {
-            return;
+        try {
+            this.confirmOrderRequest.put(order);
+            order.getCommands().forEach(command -> {
+                this.logInfo(String.format("Wykonywanie komendy dla zamówienia %s: %s", order.getId(), command));
+                this.executeCommand(command);
+            });
+        } catch (final RequestException exception) {
+            this.logError(String.format("Nieudane potwierdzenie zamówienia %s w ViShop", order.getId()));
+            this.logError("Przyczyna: " + exception.getMessage());
         }
-
-        Arrays.stream(pendingOrders)
-                .filter(order -> !order.requiresOnline() || this.isPlayerOnline(order.getPlayer()))
-                .forEach(order -> {
-                    try {
-                        this.confirmOrderRequest.put(order);
-                        order.getCommands().forEach(command -> {
-                            this.logInfo(String.format("Wykonywanie komendy dla zamówienia %s: %s", order.getId(), command));
-                            this.executeCommand(command);
-                        });
-                    } catch (final RequestException exception) {
-                        this.logError(String.format("Nieudane potwierdzenie zamówienia %s w ViShop", order.getId()));
-                        this.logError("Przyczyna: " + exception.getMessage());
-                    }
-                });
     }
 
 }

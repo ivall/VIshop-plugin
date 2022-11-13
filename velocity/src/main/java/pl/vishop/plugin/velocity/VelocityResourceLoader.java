@@ -35,7 +35,7 @@ public class VelocityResourceLoader extends ResourceLoader<ConfigurationNode> {
     protected ConfigurationNode loadResource(final Path resourcePath) throws ResourceLoaderException {
         try {
             return YAMLConfigurationLoader.builder().setPath(resourcePath).build().load();
-        } catch (final IOException exception) {
+        } catch (final Exception exception) {
             throw new ResourceLoaderException(Reason.FILE_NOT_LOADED, exception);
         }
     }

@@ -25,14 +25,14 @@ public class ViShopRequest {
     public static final String BACKEND_ADDRESS = "https://dev123.vishop.pl/panel/shops/%1$s/servers/%2$s/payments/%3$s";
 
     protected Request prepareGetRequest(final String url, final String apiKey) {
-        return this.prepareRequest(url, apiKey).build();
+        return this.prepareRequestBuilder(url, apiKey).build();
     }
 
     protected Request preparePutRequest(final String url, final String apiKey, final RequestBody body) {
-        return this.prepareRequest(url, apiKey).put(body).build();
+        return this.prepareRequestBuilder(url, apiKey).put(body).build();
     }
 
-    private Request.Builder prepareRequest(final String url, final String apiKey) {
+    private Request.Builder prepareRequestBuilder(final String url, final String apiKey) {
         return new Request.Builder()
                 .url(url)
                 .header("User-Agent", "ViShopPlugin/2.0")
