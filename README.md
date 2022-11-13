@@ -1,5 +1,9 @@
 # VIshop-plugin
-Plugin łączący serwer Minecraft z itemshopem stworzonym na [VIshop.pl](https://vishop.pl/)</br>
-Plugin przeznaczony dla silników pochodnych Bukkita (Spigota, Papera, itp.)
+Plugin łączący serwer Minecraft z itemshopem stworzonym na [VIshop.pl](https://vishop.pl/)
 
-Autor pluginu: [Kamilkime](https://github.com/Kamilkime)
+Plugin przeznaczony dla platform:
+- pochodnych Bukkita (Spigot, Paper, itp.)
+- pochodnych BungeeCorda (BungeeCord, Waterfall, itp.)
+- pochodnych Velocity
+
+Autorzy pluginu: [VIshop-plugin Contributors](https://github.com/ivall/VIshop-plugin/graphs/contributors)
