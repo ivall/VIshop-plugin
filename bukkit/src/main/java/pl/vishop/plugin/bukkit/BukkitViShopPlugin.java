@@ -42,7 +42,7 @@ public final class BukkitViShopPlugin extends JavaPlugin {
             return;
         }
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
+        Bukkit.getScheduler().runTaskTimer(
                 this,
                 new BukkitOrderTask(this, this.httpClient, config),
                 0L,
