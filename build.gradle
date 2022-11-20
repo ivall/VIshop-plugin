@@ -7,18 +7,6 @@ allprojects {
     group = 'pl.vishop.plugin'
     version = '2.0'
 
-    compileJava.options.encoding = 'UTF-8'
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
-    apply plugin: 'java-library'
-    apply plugin: 'com.github.johnrengelman.shadow'
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
-
     repositories {
         mavenCentral()
         mavenLocal()
@@ -38,6 +26,20 @@ allprojects {
             url = 'https://repo.papermc.io/repository/maven-public/'
         }
     }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    compileJava.options.encoding = 'UTF-8'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
 
     shadowJar {
         dependencies {
@@ -54,8 +56,4 @@ dependencies {
     implementation project(':bukkit')
     implementation project(':bungee')
     implementation project(':velocity')
-}
-
-shadowJar {
-    archiveFileName = "ViShopPlugin v${archiveVersion.get()}.${archiveExtension.get()}"
 }
