@@ -4,8 +4,19 @@ plugins {
 }
 
 allprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
     group = 'pl.vishop.plugin'
-    version = '2.1'
+    version = '2.2'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    compileJava.options.encoding = 'UTF-8'
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
 
     repositories {
         mavenCentral()
@@ -25,20 +36,6 @@ allprojects {
             name = 'velocity-repo'
             url = 'https://repo.papermc.io/repository/maven-public/'
         }
-    }
-}
-
-subprojects {
-    apply plugin: 'java-library'
-    apply plugin: 'com.github.johnrengelman.shadow'
-
-    compileJava.options.encoding = 'UTF-8'
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
     }
 
     shadowJar {

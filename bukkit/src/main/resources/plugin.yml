@@ -1,5 +1,5 @@
 name: ViShopPlugin
-version: '2.1'
+version: '2.2'
 api-version: 1.13
 main: pl.vishop.plugin.bukkit.BukkitViShopPlugin
 description: "Wykonuj zamówienia ze swojego sklepu ViShop"
