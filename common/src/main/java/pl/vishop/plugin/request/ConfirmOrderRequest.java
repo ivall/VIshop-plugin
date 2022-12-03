@@ -17,6 +17,7 @@
 
 package pl.vishop.plugin.request;
 
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -42,11 +43,10 @@ public final class ConfirmOrderRequest extends ViShopRequest {
     }
 
     public void put(final Order order) throws RequestException {
-        final String url = this.getRequestUrl(order);
-        final Request request = this.preparePutRequest(url, this.config.apiKey, REQUEST_BODY);
+        final Request request = this.preparePutRequest(this.getRequestUrl(order), this.config.apiKey, REQUEST_BODY);
 
         if (this.config.debug) {
-            this.logger.debug(String.format("Sending PUT request to url: %s", url));
+            this.logger.debug(String.format("Sending PUT request to url: %s", request.url()));
             this.logger.debug(String.format("Attaching API key: %s", this.config.apiKey));
         }
 
@@ -64,8 +64,9 @@ public final class ConfirmOrderRequest extends ViShopRequest {
         }
     }
 
-    private String getRequestUrl(final Order order) {
-        return String.format(BACKEND_ADDRESS, this.config.shopId, this.config.serverId, order.getId() + "/");
+    private HttpUrl getRequestUrl(final Order order) {
+        final String urlString = String.format(BACKEND_ADDRESS, this.config.shopId, this.config.serverId, order.getId() + "/");
+        return HttpUrl.parse(urlString);
     }
 
 }

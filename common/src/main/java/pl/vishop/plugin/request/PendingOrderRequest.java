@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -35,21 +36,19 @@ public final class PendingOrderRequest extends ViShopRequest {
     private final OkHttpClient httpClient;
     private final Config config;
     private final ViShopLogger logger;
-    private final String requestUrl;
 
     public PendingOrderRequest(final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
         this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
         this.httpClient = httpClient;
         this.config = config;
         this.logger = logger;
-        this.requestUrl = String.format(BACKEND_ADDRESS, config.shopId, config.serverId, "?status=executing");
     }
 
     public Order[] get() throws RequestException {
-        final Request request = this.prepareGetRequest(this.requestUrl, this.config.apiKey);
+        final Request request = this.prepareGetRequest(this.getRequestUrl(), this.config.apiKey);
 
         if (this.config.debug) {
-            this.logger.debug(String.format("Sending GET request to url: %s", this.requestUrl));
+            this.logger.debug(String.format("Sending GET request to url: %s", request.url()));
             this.logger.debug(String.format("Attaching API key: %s", this.config.apiKey));
         }
 
@@ -75,6 +74,11 @@ public final class PendingOrderRequest extends ViShopRequest {
         } catch (final IOException exception) {
             throw new RequestException(exception.getMessage());
         }
+    }
+
+    private HttpUrl getRequestUrl() {
+        final String urlString = String.format(BACKEND_ADDRESS, this.config.shopId, this.config.serverId, "?status=executing");
+        return HttpUrl.parse(urlString);
     }
 
 }
