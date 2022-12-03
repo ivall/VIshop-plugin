@@ -17,29 +17,25 @@
 
 package pl.vishop.plugin.bungee;
 
-import net.md_5.bungee.api.ProxyServer;
-import okhttp3.OkHttpClient;
-import pl.vishop.plugin.config.Config;
-import pl.vishop.plugin.logger.ViShopLogger;
-import pl.vishop.plugin.order.OrderTask;
+import net.md_5.bungee.config.Configuration;
+import pl.vishop.plugin.config.ConfigLoader;
 
-public class BungeeOrderTask extends OrderTask {
+public class BungeeConfigLoader implements ConfigLoader {
 
-    private final ProxyServer proxy;
+    private final Configuration configFile;
 
-    public BungeeOrderTask(final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
-        super(httpClient, config, logger);
-        this.proxy = ProxyServer.getInstance();
+    public BungeeConfigLoader(final Configuration configFile) {
+        this.configFile = configFile;
     }
 
     @Override
-    public boolean isPlayerOnline(final String playerName) {
-        return this.proxy.getPlayer(playerName) != null;
+    public boolean getBoolean(final String key) {
+        return this.configFile.getBoolean(key);
     }
 
     @Override
-    public void executeCommand(final String command) {
-        this.proxy.getPluginManager().dispatchCommand(this.proxy.getConsole(), command);
+    public String getString(final String key) {
+        return this.configFile.getString(key);
     }
 
 }

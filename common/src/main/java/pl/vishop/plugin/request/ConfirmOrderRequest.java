@@ -17,13 +17,13 @@
 
 package pl.vishop.plugin.request;
 
-import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import pl.vishop.plugin.config.Config;
+import pl.vishop.plugin.logger.ViShopLogger;
 import pl.vishop.plugin.order.Order;
 
 public final class ConfirmOrderRequest extends ViShopRequest {
@@ -33,14 +33,22 @@ public final class ConfirmOrderRequest extends ViShopRequest {
 
     private final OkHttpClient httpClient;
     private final Config config;
+    private final ViShopLogger logger;
 
-    public ConfirmOrderRequest(final OkHttpClient httpClient, final Config config) {
+    public ConfirmOrderRequest(final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
         this.httpClient = httpClient;
         this.config = config;
+        this.logger = logger;
     }
 
     public void put(final Order order) throws RequestException {
-        final Request request = this.preparePutRequest(this.getRequestUrl(order), this.config.apiKey, REQUEST_BODY);
+        final String url = this.getRequestUrl(order);
+        final Request request = this.preparePutRequest(url, this.config.apiKey, REQUEST_BODY);
+
+        if (this.config.debug) {
+            this.logger.debug(String.format("Sending PUT request to url: %s", url));
+            this.logger.debug(String.format("Attaching API key: %s", this.config.apiKey));
+        }
 
         try (final Response response = this.httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {

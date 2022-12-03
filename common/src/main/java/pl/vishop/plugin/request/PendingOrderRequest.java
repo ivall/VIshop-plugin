@@ -27,6 +27,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import pl.vishop.plugin.config.Config;
+import pl.vishop.plugin.logger.ViShopLogger;
 import pl.vishop.plugin.order.Order;
 
 public final class PendingOrderRequest extends ViShopRequest {
@@ -34,17 +35,24 @@ public final class PendingOrderRequest extends ViShopRequest {
     private final Gson gson;
     private final OkHttpClient httpClient;
     private final Config config;
+    private final ViShopLogger logger;
     private final String requestUrl;
 
-    public PendingOrderRequest(final OkHttpClient httpClient, final Config config) {
+    public PendingOrderRequest(final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
         this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
         this.httpClient = httpClient;
         this.config = config;
+        this.logger = logger;
         this.requestUrl = String.format(BACKEND_ADDRESS, config.shopId, config.serverId, "?status=executing");
     }
 
     public Order[] get() throws RequestException {
         final Request request = this.prepareGetRequest(this.requestUrl, this.config.apiKey);
+
+        if (this.config.debug) {
+            this.logger.debug(String.format("Sending GET request to url: %s", this.requestUrl));
+            this.logger.debug(String.format("Attaching API key: %s", this.config.apiKey));
+        }
 
         try (final Response response = this.httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -56,8 +64,13 @@ public final class PendingOrderRequest extends ViShopRequest {
                 throw new RequestException("Puste body odpowiedzi");
             }
 
+            final String responseAsString = responseBody.string();
+            if (this.config.debug) {
+                this.logger.debug(String.format("Response for GET request: %s", responseAsString));
+            }
+
             try {
-                return this.gson.fromJson(responseBody.string(), Order[].class);
+                return this.gson.fromJson(responseAsString, Order[].class);
             } catch (final JsonSyntaxException exception) {
                 throw new RequestException(exception.getMessage());
             }

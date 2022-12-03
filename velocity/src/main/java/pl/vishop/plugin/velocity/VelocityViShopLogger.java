@@ -15,31 +15,32 @@
  * limitations under the License.
  */
 
-package pl.vishop.plugin.bungee;
+package pl.vishop.plugin.velocity;
 
-import net.md_5.bungee.api.ProxyServer;
-import okhttp3.OkHttpClient;
-import pl.vishop.plugin.config.Config;
+import org.slf4j.Logger;
 import pl.vishop.plugin.logger.ViShopLogger;
-import pl.vishop.plugin.order.OrderTask;
 
-public class BungeeOrderTask extends OrderTask {
+public class VelocityViShopLogger implements ViShopLogger {
 
-    private final ProxyServer proxy;
+    private final Logger logger;
 
-    public BungeeOrderTask(final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
-        super(httpClient, config, logger);
-        this.proxy = ProxyServer.getInstance();
+    public VelocityViShopLogger(final Logger logger) {
+        this.logger = logger;
     }
 
     @Override
-    public boolean isPlayerOnline(final String playerName) {
-        return this.proxy.getPlayer(playerName) != null;
+    public void info(final String message) {
+        this.logger.info(message);
     }
 
     @Override
-    public void executeCommand(final String command) {
-        this.proxy.getPluginManager().dispatchCommand(this.proxy.getConsole(), command);
+    public void error(final String message) {
+        this.logger.error(message);
+    }
+
+    @Override
+    public void debug(final String message) {
+        this.logger.debug(message);
     }
 
 }

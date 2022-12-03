@@ -31,13 +31,14 @@ import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import pl.vishop.plugin.config.Config;
 import pl.vishop.plugin.config.EmptyConfigFieldException;
+import pl.vishop.plugin.logger.ViShopLogger;
 import pl.vishop.plugin.resource.ResourceLoader;
 import pl.vishop.plugin.resource.ResourceLoaderException;
 
 @Plugin(
         id = "vishop",
         name = "ViShopPlugin",
-        version = "2.2",
+        version = "2.3",
         description = "Wykonuj zamówienia ze swojego sklepu ViShop",
         url = "https://vishop.pl/",
         authors = "VIshop-plugin Contributors"
@@ -67,24 +68,18 @@ public class VelocityViShopPlugin {
                 return;
             }
 
-            final ConfigurationNode cfgFile = resourceLoader.load("config.yml");
-            final Config config;
-
             try {
-                config = new Config(
-                        cfgFile.getNode("apiKey").getString(),
-                        cfgFile.getNode("shopId").getString(),
-                        cfgFile.getNode("serverId").getString()
-                );
+                final ConfigurationNode cfgFile = resourceLoader.load("config.yml");
+                final Config config = new Config(new VelocityConfigLoader(cfgFile));
+                final ViShopLogger viShopLogger = new VelocityViShopLogger(this.logger);
+
+                this.orderTask = this.proxy.getScheduler()
+                        .buildTask(this, new VelocityOrderTask(this.proxy, this.httpClient, config, viShopLogger))
+                        .repeat(config.taskInterval)
+                        .schedule();
             } catch (final EmptyConfigFieldException exception) {
                 this.logger.error(exception.getMessage());
-                return;
             }
-
-            this.orderTask = this.proxy.getScheduler()
-                    .buildTask(this, new VelocityOrderTask(this.proxy, this.logger, this.httpClient, config))
-                    .repeat(config.taskInterval)
-                    .schedule();
         } catch (final ResourceLoaderException exception) {
             this.logger.error(exception.getReason().getMessage("config.yml"));
             this.logger.error("Przyczyna: " + exception.getCause().getMessage());

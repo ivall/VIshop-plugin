@@ -19,10 +19,10 @@ package pl.vishop.plugin.bukkit;
 
 import okhttp3.OkHttpClient;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.vishop.plugin.config.Config;
 import pl.vishop.plugin.config.EmptyConfigFieldException;
+import pl.vishop.plugin.logger.ViShopLogger;
 
 public final class BukkitViShopPlugin extends JavaPlugin {
 
@@ -32,22 +32,20 @@ public final class BukkitViShopPlugin extends JavaPlugin {
     public void onEnable() {
         this.saveDefaultConfig();
 
-        final Config config;
         try {
-            final FileConfiguration cfgFile = this.getConfig();
-            config = new Config(cfgFile.getString("apiKey"), cfgFile.getString("shopId"), cfgFile.getString("serverId"));
+            final Config config = new Config(new BukkitConfigLoader(this.getConfig()));
+            final ViShopLogger logger = new BukkitViShopLogger(this.getLogger());
+
+            Bukkit.getScheduler().runTaskTimerAsynchronously(
+                    this,
+                    new BukkitOrderTask(this, this.httpClient, config, logger),
+                    0L,
+                    config.taskInterval.getSeconds() * 20L
+            );
         } catch (final EmptyConfigFieldException exception) {
             this.getLogger().severe(exception.getMessage());
             Bukkit.getPluginManager().disablePlugin(this);
-            return;
         }
-
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
-                this,
-                new BukkitOrderTask(this, this.httpClient, config),
-                0L,
-                config.taskInterval.getSeconds() * 20L
-        );
     }
 
     @Override

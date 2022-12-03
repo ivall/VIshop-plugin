@@ -25,13 +25,15 @@ public class Config {
     public final String apiKey;
     public final String shopId;
     public final String serverId;
+    public final boolean debug;
 
     public final Duration taskInterval = Duration.of(30, ChronoUnit.SECONDS);
 
-    public Config(final String apiKey, final String shopId, final String serverId) throws EmptyConfigFieldException {
-        this.apiKey = apiKey;
-        this.shopId = shopId;
-        this.serverId = serverId;
+    public Config(final ConfigLoader loader) throws EmptyConfigFieldException {
+        this.apiKey = loader.getString("apiKey");
+        this.shopId = loader.getString("shopId");
+        this.serverId = loader.getString("serverId");
+        this.debug = loader.getBoolean("debug");
         this.checkValues();
     }
 

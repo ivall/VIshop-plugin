@@ -17,30 +17,30 @@
 
 package pl.vishop.plugin.bukkit;
 
-import okhttp3.OkHttpClient;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import pl.vishop.plugin.config.Config;
+import java.util.logging.Logger;
 import pl.vishop.plugin.logger.ViShopLogger;
-import pl.vishop.plugin.order.OrderTask;
 
-public class BukkitOrderTask extends OrderTask {
+public class BukkitViShopLogger implements ViShopLogger {
 
-    private final Plugin plugin;
+    private final Logger logger;
 
-    public BukkitOrderTask(final Plugin plugin, final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
-        super(httpClient, config, logger);
-        this.plugin = plugin;
+    public BukkitViShopLogger(final Logger logger) {
+        this.logger = logger;
     }
 
     @Override
-    public boolean isPlayerOnline(final String playerName) {
-        return Bukkit.getPlayerExact(playerName) != null;
+    public void info(final String message) {
+        this.logger.info(message);
     }
 
     @Override
-    public void executeCommand(final String command) {
-        Bukkit.getScheduler().runTask(this.plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+    public void error(final String message) {
+        this.logger.severe(message);
+    }
+
+    @Override
+    public void debug(final String message) {
+        this.logger.fine(message);
     }
 
 }

@@ -20,6 +20,7 @@ package pl.vishop.plugin.order;
 import java.util.Arrays;
 import okhttp3.OkHttpClient;
 import pl.vishop.plugin.config.Config;
+import pl.vishop.plugin.logger.ViShopLogger;
 import pl.vishop.plugin.request.ConfirmOrderRequest;
 import pl.vishop.plugin.request.PendingOrderRequest;
 import pl.vishop.plugin.request.RequestException;
@@ -28,15 +29,13 @@ public abstract class OrderTask implements Runnable {
 
     private final PendingOrderRequest pendingOrderRequest;
     private final ConfirmOrderRequest confirmOrderRequest;
+    private final ViShopLogger logger;
 
-    protected OrderTask(final OkHttpClient httpClient, final Config config) {
-        this.pendingOrderRequest = new PendingOrderRequest(httpClient, config);
-        this.confirmOrderRequest = new ConfirmOrderRequest(httpClient, config);
+    protected OrderTask(final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
+        this.pendingOrderRequest = new PendingOrderRequest(httpClient, config, logger);
+        this.confirmOrderRequest = new ConfirmOrderRequest(httpClient, config, logger);
+        this.logger = logger;
     }
-
-    public abstract void logInfo(final String message);
-
-    public abstract void logError(final String message);
 
     public abstract boolean isPlayerOnline(final String playerName);
 
@@ -47,8 +46,8 @@ public abstract class OrderTask implements Runnable {
         try {
             Arrays.stream(this.pendingOrderRequest.get()).forEach(this::processOrder);
         } catch (final RequestException exception) {
-            this.logError("Nieudane pobranie zamówień z ViShop");
-            this.logError("Przyczyna: " + exception.getMessage());
+            this.logger.error("Nieudane pobranie zamówień z ViShop");
+            this.logger.error("Przyczyna: " + exception.getMessage());
         }
     }
 
@@ -60,12 +59,12 @@ public abstract class OrderTask implements Runnable {
         try {
             this.confirmOrderRequest.put(order);
             order.getCommands().forEach(command -> {
-                this.logInfo(String.format("Wykonywanie komendy dla zamówienia %s: %s", order.getId(), command));
+                this.logger.info(String.format("Wykonywanie komendy dla zamówienia %s: %s", order.getId(), command));
                 this.executeCommand(command);
             });
         } catch (final RequestException exception) {
-            this.logError(String.format("Nieudane potwierdzenie zamówienia %s w ViShop", order.getId()));
-            this.logError("Przyczyna: " + exception.getMessage());
+            this.logger.error(String.format("Nieudane potwierdzenie zamówienia %s w ViShop", order.getId()));
+            this.logger.error("Przyczyna: " + exception.getMessage());
         }
     }
 

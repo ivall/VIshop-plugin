@@ -9,3 +9,13 @@ shopId: ""
 # ID serwera w sklepie
 # Znajdziesz je w panelu sklepu, w zakładce Serwery
 serverId: ""
+
+# Czy włączyć logi debug?
+#
+# UWAGA — logi debug powinny być włączone tylko w przypadku problemów z pluginem
+# Po ich ustąpieniu — powinny znowu zostać wyłączone, a stare pliki logów skasowane
+# Uruchomienie tych logów będzie pokazywać w konsoli wrażliwe informacje:
+#  - klucz API
+#  - adresy, z którymi łączy się plugin
+#  - dane wysyłane przez ViShop
+debug: false
