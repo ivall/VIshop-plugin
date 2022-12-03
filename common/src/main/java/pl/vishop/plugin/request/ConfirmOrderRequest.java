@@ -51,6 +51,11 @@ public final class ConfirmOrderRequest extends ViShopRequest {
         }
 
         try (final Response response = this.httpClient.newCall(request).execute()) {
+            final String responseBody = response.body() != null ? response.body().string() : null;
+            if (this.config.debug) {
+                this.logger.debug(String.format("Response for PUT request: %s", responseBody));
+            }
+
             if (!response.isSuccessful()) {
                 throw new RequestException("Otrzymany kod odpowiedzi " + response.code());
             }

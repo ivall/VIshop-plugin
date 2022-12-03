@@ -25,7 +25,6 @@ import java.io.IOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 import pl.vishop.plugin.config.Config;
 import pl.vishop.plugin.logger.ViShopLogger;
 import pl.vishop.plugin.order.Order;
@@ -55,22 +54,21 @@ public final class PendingOrderRequest extends ViShopRequest {
         }
 
         try (final Response response = this.httpClient.newCall(request).execute()) {
+            final String responseBody = response.body() != null ? response.body().string() : null;
+            if (this.config.debug) {
+                this.logger.debug(String.format("Response for GET request: %s", responseBody));
+            }
+
             if (!response.isSuccessful()) {
                 throw new RequestException("Otrzymany kod odpowiedzi " + response.code());
             }
 
-            final ResponseBody responseBody = response.body();
             if (responseBody == null) {
                 throw new RequestException("Puste body odpowiedzi");
             }
 
-            final String responseAsString = responseBody.string();
-            if (this.config.debug) {
-                this.logger.debug(String.format("Response for GET request: %s", responseAsString));
-            }
-
             try {
-                return this.gson.fromJson(responseAsString, Order[].class);
+                return this.gson.fromJson(responseBody, Order[].class);
             } catch (final JsonSyntaxException exception) {
                 throw new RequestException(exception.getMessage());
             }
