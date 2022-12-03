@@ -40,7 +40,7 @@ public class BungeeViShopLogger implements ViShopLogger {
 
     @Override
     public void debug(final String message) {
-        this.logger.fine(message);
+        this.logger.info(String.format("[DEBUG] %s", message));
     }
 
 }
