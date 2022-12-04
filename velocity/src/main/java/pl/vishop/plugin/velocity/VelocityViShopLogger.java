@@ -40,7 +40,7 @@ public class VelocityViShopLogger implements ViShopLogger {
 
     @Override
     public void debug(final String message) {
-        this.logger.debug(message);
+        this.logger.info(String.format("[DEBUG] %s", message));
     }
 
 }
