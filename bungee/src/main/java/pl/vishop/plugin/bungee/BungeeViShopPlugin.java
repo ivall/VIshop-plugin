@@ -23,6 +23,7 @@ import net.md_5.bungee.config.Configuration;
 import okhttp3.OkHttpClient;
 import pl.vishop.plugin.config.Config;
 import pl.vishop.plugin.config.EmptyConfigFieldException;
+import pl.vishop.plugin.logger.ViShopLogger;
 import pl.vishop.plugin.resource.ResourceLoader;
 import pl.vishop.plugin.resource.ResourceLoaderException;
 
@@ -39,23 +40,21 @@ public class BungeeViShopPlugin extends Plugin {
                 return;
             }
 
-            final Configuration cfgFile = resourceLoader.load("config.yml");
-            final Config config;
-
             try {
-                config = new Config(cfgFile.getString("apiKey"), cfgFile.getString("shopId"), cfgFile.getString("serverId"));
+                final Configuration cfgFile = resourceLoader.load("config.yml");
+                final Config config = new Config(new BungeeConfigLoader(cfgFile));
+                final ViShopLogger logger = new BungeeViShopLogger(this.getLogger());
+
+                this.getProxy().getScheduler().schedule(
+                        this,
+                        new BungeeOrderTask(this.httpClient, config, logger),
+                        0L,
+                        config.taskInterval.getSeconds(),
+                        TimeUnit.SECONDS
+                );
             } catch (final EmptyConfigFieldException exception) {
                 this.getLogger().severe(exception.getMessage());
-                return;
             }
-
-            this.getProxy().getScheduler().schedule(
-                    this,
-                    new BungeeOrderTask(this, this.httpClient, config),
-                    0L,
-                    config.taskInterval.getSeconds(),
-                    TimeUnit.SECONDS
-            );
         } catch (final ResourceLoaderException exception) {
             this.getLogger().severe(exception.getReason().getMessage("config.yml"));
             this.getLogger().severe("Przyczyna: " + exception.getCause().getMessage());

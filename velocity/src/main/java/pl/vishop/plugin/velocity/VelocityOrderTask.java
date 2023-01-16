@@ -19,29 +19,17 @@ package pl.vishop.plugin.velocity;
 
 import com.velocitypowered.api.proxy.ProxyServer;
 import okhttp3.OkHttpClient;
-import org.slf4j.Logger;
 import pl.vishop.plugin.config.Config;
+import pl.vishop.plugin.logger.ViShopLogger;
 import pl.vishop.plugin.order.OrderTask;
 
 public class VelocityOrderTask extends OrderTask {
 
     private final ProxyServer proxy;
-    private final Logger logger;
 
-    protected VelocityOrderTask(final ProxyServer proxy, final Logger logger, final OkHttpClient httpClient, final Config config) {
-        super(httpClient, config);
+    protected VelocityOrderTask(final ProxyServer proxy, final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
+        super(httpClient, config, logger);
         this.proxy = proxy;
-        this.logger = logger;
-    }
-
-    @Override
-    public void logInfo(final String message) {
-        this.logger.info(message);
-    }
-
-    @Override
-    public void logError(final String message) {
-        this.logger.error(message);
     }
 
     @Override

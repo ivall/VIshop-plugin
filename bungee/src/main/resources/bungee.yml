@@ -1,5 +1,5 @@
 name: ViShopPlugin
-version: '2.2'
+version: '2.3'
 api-version: 1.13
 main: pl.vishop.plugin.bungee.BungeeViShopPlugin
 description: "Wykonuj zamówienia ze swojego sklepu ViShop"

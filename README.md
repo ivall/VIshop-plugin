@@ -1,5 +1,6 @@
 # VIshop-plugin
-Plugin łączący serwer Minecraft z itemshopem stworzonym na [VIshop.pl](https://vishop.pl/)
+Plugin łączący serwer Minecraft z itemshopem stworzonym na [VIshop.pl](https://vishop.pl/)  
+Wspierane (przetestowane przez autorów) wersje Minecrafta — od 1.8 do 1.19.3
 
 Plugin przeznaczony dla platform:
 - pochodnych Bukkita (Spigot, Paper, itp.)

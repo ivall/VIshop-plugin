@@ -22,11 +22,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 import pl.vishop.plugin.config.Config;
+import pl.vishop.plugin.logger.ViShopLogger;
 import pl.vishop.plugin.order.Order;
 
 public final class PendingOrderRequest extends ViShopRequest {
@@ -34,36 +35,50 @@ public final class PendingOrderRequest extends ViShopRequest {
     private final Gson gson;
     private final OkHttpClient httpClient;
     private final Config config;
-    private final String requestUrl;
+    private final ViShopLogger logger;
 
-    public PendingOrderRequest(final OkHttpClient httpClient, final Config config) {
+    public PendingOrderRequest(final OkHttpClient httpClient, final Config config, final ViShopLogger logger) {
         this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
         this.httpClient = httpClient;
         this.config = config;
-        this.requestUrl = String.format(BACKEND_ADDRESS, config.shopId, config.serverId, "?status=executing");
+        this.logger = logger;
     }
 
     public Order[] get() throws RequestException {
-        final Request request = this.prepareGetRequest(this.requestUrl, this.config.apiKey);
+        final Request request = this.prepareGetRequest(this.getRequestUrl(), this.config.apiKey);
+
+        if (this.config.debug) {
+            this.logger.debug(String.format("Sending GET request to url: %s", request.url()));
+            this.logger.debug(String.format("Attaching API key: %s", this.config.apiKey));
+        }
 
         try (final Response response = this.httpClient.newCall(request).execute()) {
+            final String responseBody = response.body() != null ? response.body().string() : null;
+            if (this.config.debug) {
+                this.logger.debug(String.format("Response for GET request: %s", responseBody));
+            }
+
             if (!response.isSuccessful()) {
                 throw new RequestException("Otrzymany kod odpowiedzi " + response.code());
             }
 
-            final ResponseBody responseBody = response.body();
             if (responseBody == null) {
                 throw new RequestException("Puste body odpowiedzi");
             }
 
             try {
-                return this.gson.fromJson(responseBody.string(), Order[].class);
+                return this.gson.fromJson(responseBody, Order[].class);
             } catch (final JsonSyntaxException exception) {
                 throw new RequestException(exception.getMessage());
             }
         } catch (final IOException exception) {
             throw new RequestException(exception.getMessage());
         }
+    }
+
+    private HttpUrl getRequestUrl() {
+        final String urlString = String.format(BACKEND_ADDRESS, this.config.shopId, this.config.serverId, "?status=executing");
+        return HttpUrl.parse(urlString);
     }
 
 }
