@@ -36,7 +36,8 @@ public class ViShopRequest {
     private Request.Builder prepareRequestBuilder(final HttpUrl url, final String apiKey) {
         return new Request.Builder()
                 .url(url)
-                .header("User-Agent", "ViShopPlugin/2.3")
+                .header("Connection", "close")
+                .header("User-Agent", "ViShopPlugin/2.4")
                 .header("Authorization", apiKey);
     }
 
