@@ -1,4 +1,5 @@
 dependencies {
     api 'com.squareup.okhttp3:okhttp:4.10.0'
-    compileOnly 'com.google.code.gson:gson:2.2.4'
+    compileOnly 'com.google.code.gson:gson:2.8.9'
+    api 'eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.0-beta.5'
 }

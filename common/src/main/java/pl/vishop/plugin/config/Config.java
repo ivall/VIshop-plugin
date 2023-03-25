@@ -17,23 +17,33 @@
 
 package pl.vishop.plugin.config;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
-public class Config {
+import eu.okaeri.configs.OkaeriConfig;
+import eu.okaeri.configs.annotation.Comment;
 
-    public final String apiKey;
-    public final String shopId;
-    public final String serverId;
-    public final boolean debug;
+public class Config extends OkaeriConfig {
+    @Comment("Klucz API do autoryzacji połączeń")
+    @Comment("Znajdziesz go w panelu sklepu, w zakładce Ustawienia")
+    public String apiKey = "";
+    @Comment("ID sklepu")
+    @Comment("Znajdziesz je na głównej stronie panelu sklepu")
+    public String shopId = "";
+    @Comment("ID serwera w sklepie")
+    @Comment("Znajdziesz je w panelu sklepu, w zakładce Serwery")
+    public String serverId = "";
+    @Comment("Czy włączyć logi debug?")
+    @Comment("")
+    @Comment("UWAGA — logi debug powinny być włączone tylko w przypadku problemów z pluginem")
+    @Comment("Po ich ustąpieniu — powinny znowu zostać wyłączone, a stare pliki logów skasowane")
+    @Comment("Uruchomienie tych logów będzie pokazywać w konsoli wrażliwe informacje:")
+    @Comment(" - klucz API")
+    @Comment(" - adresy, z którymi łączy się plugin")
+    @Comment(" - dane wysyłane przez ViShop")
+    public boolean debug = false;
 
-    public final Duration taskInterval = Duration.of(30, ChronoUnit.SECONDS);
+    public long taskInterval = 30;
 
-    public Config(final ConfigLoader loader) throws EmptyConfigFieldException {
-        this.apiKey = loader.getString("apiKey");
-        this.shopId = loader.getString("shopId");
-        this.serverId = loader.getString("serverId");
-        this.debug = loader.getBoolean("debug");
+    public Config() throws EmptyConfigFieldException {
         this.checkValues();
     }
 
@@ -50,5 +60,7 @@ public class Config {
             throw new EmptyConfigFieldException("ID serwera");
         }
     }
+
+
 
 }

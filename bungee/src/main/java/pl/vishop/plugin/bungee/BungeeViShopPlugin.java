@@ -17,9 +17,15 @@
 
 package pl.vishop.plugin.bungee;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
+
+import eu.okaeri.configs.ConfigManager;
+import eu.okaeri.configs.exception.OkaeriException;
+import eu.okaeri.configs.yaml.snakeyaml.YamlSnakeYamlConfigurer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import pl.vishop.plugin.config.Config;
 import pl.vishop.plugin.config.EmptyConfigFieldException;
@@ -29,36 +35,33 @@ import pl.vishop.plugin.resource.ResourceLoaderException;
 
 public class BungeeViShopPlugin extends Plugin {
 
-    private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    private final OkHttpClient httpClient = new OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .callTimeout(5, TimeUnit.SECONDS)
+            .connectionPool(new ConnectionPool(5, 30, TimeUnit.SECONDS))
+            .build();
 
     @Override
     public void onEnable() {
-        final ResourceLoader<Configuration> resourceLoader = new BungeeResourceLoader(this.getClass(), this.getDataFolder());
-        try {
-            if (resourceLoader.saveDefault("config.yml")) {
-                this.getLogger().info("Domyślny plik config.yml zapisany, skonfiguruj go i zrestartuj proxy");
-                return;
-            }
-
             try {
-                final Configuration cfgFile = resourceLoader.load("config.yml");
-                final Config config = new Config(new BungeeConfigLoader(cfgFile));
+                final Config config = ConfigManager.create(Config.class, it -> it
+                        .withBindFile(new File(getDataFolder(), "config.yml"))
+                        .withConfigurer(new YamlSnakeYamlConfigurer())
+                        .saveDefaults()
+                        .load(true));
                 final ViShopLogger logger = new BungeeViShopLogger(this.getLogger());
 
                 this.getProxy().getScheduler().schedule(
                         this,
                         new BungeeOrderTask(this.httpClient, config, logger),
                         0L,
-                        config.taskInterval.getSeconds(),
+                        config.taskInterval,
                         TimeUnit.SECONDS
                 );
-            } catch (final EmptyConfigFieldException exception) {
-                this.getLogger().severe(exception.getMessage());
+            } catch (final OkaeriException exception) {
+                this.getLogger().severe(exception.getCause().getMessage());
             }
-        } catch (final ResourceLoaderException exception) {
-            this.getLogger().severe(exception.getReason().getMessage("config.yml"));
-            this.getLogger().severe("Przyczyna: " + exception.getCause().getMessage());
-        }
     }
 
     @Override

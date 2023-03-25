@@ -25,15 +25,20 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
-import java.nio.file.Path;
+import eu.okaeri.configs.ConfigManager;
+import eu.okaeri.configs.exception.OkaeriException;
+import eu.okaeri.configs.yaml.snakeyaml.YamlSnakeYamlConfigurer;
 import ninja.leaping.configurate.ConfigurationNode;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import pl.vishop.plugin.config.Config;
 import pl.vishop.plugin.config.EmptyConfigFieldException;
 import pl.vishop.plugin.logger.ViShopLogger;
-import pl.vishop.plugin.resource.ResourceLoader;
-import pl.vishop.plugin.resource.ResourceLoaderException;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(
         id = "vishop",
@@ -45,7 +50,12 @@ import pl.vishop.plugin.resource.ResourceLoaderException;
 )
 public class VelocityViShopPlugin {
 
-    private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    private final OkHttpClient httpClient = new OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .callTimeout(5, TimeUnit.SECONDS)
+            .connectionPool(new ConnectionPool(5, 30, TimeUnit.SECONDS))
+            .build();
     private final ProxyServer proxy;
     private final Logger logger;
     private final Path dataDirectory;
@@ -61,28 +71,20 @@ public class VelocityViShopPlugin {
 
     @Subscribe
     public void onProxyInit(final ProxyInitializeEvent event) {
-        final ResourceLoader<ConfigurationNode> resourceLoader = new VelocityResourceLoader(this.getClass(), this.dataDirectory);
         try {
-            if (resourceLoader.saveDefault("config.yml")) {
-                this.logger.info("Domyślny plik config.yml zapisany, skonfiguruj go i zrestartuj proxy");
-                return;
-            }
+            final Config config = ConfigManager.create(Config.class, it -> it
+                    .withBindFile(new File(dataDirectory.toFile(), "config.yml"))
+                    .withConfigurer(new YamlSnakeYamlConfigurer())
+                    .saveDefaults()
+                    .load(true));
+            final ViShopLogger viShopLogger = new VelocityViShopLogger(this.logger);
 
-            try {
-                final ConfigurationNode cfgFile = resourceLoader.load("config.yml");
-                final Config config = new Config(new VelocityConfigLoader(cfgFile));
-                final ViShopLogger viShopLogger = new VelocityViShopLogger(this.logger);
-
-                this.orderTask = this.proxy.getScheduler()
-                        .buildTask(this, new VelocityOrderTask(this.proxy, this.httpClient, config, viShopLogger))
-                        .repeat(config.taskInterval)
-                        .schedule();
-            } catch (final EmptyConfigFieldException exception) {
-                this.logger.error(exception.getMessage());
-            }
-        } catch (final ResourceLoaderException exception) {
-            this.logger.error(exception.getReason().getMessage("config.yml"));
-            this.logger.error("Przyczyna: " + exception.getCause().getMessage());
+            this.orderTask = this.proxy.getScheduler()
+                    .buildTask(this, new VelocityOrderTask(this.proxy, this.httpClient, config, viShopLogger))
+                    .repeat(config.taskInterval, TimeUnit.SECONDS)
+                    .schedule();
+        } catch (final OkaeriException exception) {
+            this.logger.error(exception.getCause().getMessage());
         }
     }
 

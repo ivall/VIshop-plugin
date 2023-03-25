@@ -14,14 +14,13 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     compileJava.options.encoding = 'UTF-8'
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
     }
 
     repositories {
         mavenCentral()
         mavenLocal()
-
         maven {
             name = 'spigotmc-repo'
             url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
@@ -36,6 +35,7 @@ allprojects {
             name = 'velocity-repo'
             url = 'https://repo.papermc.io/repository/maven-public/'
         }
+        maven { url "https://storehouse.okaeri.eu/repository/maven-public/" }
     }
 
     shadowJar {

@@ -17,33 +17,48 @@
 
 package pl.vishop.plugin.bukkit;
 
+import eu.okaeri.configs.ConfigManager;
+import eu.okaeri.configs.exception.OkaeriException;
+import eu.okaeri.configs.yaml.snakeyaml.YamlSnakeYamlConfigurer;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.vishop.plugin.config.Config;
-import pl.vishop.plugin.config.EmptyConfigFieldException;
 import pl.vishop.plugin.logger.ViShopLogger;
+
+import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public final class BukkitViShopPlugin extends JavaPlugin {
 
-    private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    private final OkHttpClient httpClient = new OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .callTimeout(5, TimeUnit.SECONDS)
+            .connectionPool(new ConnectionPool(5, 30, TimeUnit.SECONDS))
+            .build();
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
 
         try {
-            final Config config = new Config(new BukkitConfigLoader(this.getConfig()));
+            final Config config = ConfigManager.create(Config.class, it -> it
+                    .withBindFile(new File(getDataFolder(), "config.yml"))
+                    .withConfigurer(new YamlSnakeYamlConfigurer())
+                    .saveDefaults()
+                    .load(true));
             final ViShopLogger logger = new BukkitViShopLogger(this.getLogger());
 
             Bukkit.getScheduler().runTaskTimerAsynchronously(
                     this,
                     new BukkitOrderTask(this, this.httpClient, config, logger),
                     0L,
-                    config.taskInterval.getSeconds() * 20L
+                    config.taskInterval * 20L
             );
-        } catch (final EmptyConfigFieldException exception) {
-            this.getLogger().severe(exception.getMessage());
+        } catch (OkaeriException exception) {
+            this.getLogger().severe(exception.getCause().getMessage());
             Bukkit.getPluginManager().disablePlugin(this);
         }
     }
