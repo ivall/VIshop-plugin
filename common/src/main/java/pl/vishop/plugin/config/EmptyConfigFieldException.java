@@ -20,7 +20,7 @@ package pl.vishop.plugin.config;
 public final class EmptyConfigFieldException extends Exception {
 
     public EmptyConfigFieldException(final String fieldName) {
-        super(String.format("Musisz uzupełnić %s pliku konfiguracyjnym, aby plugin działał. Wyłączam...", fieldName));
+        super(String.format("Musisz uzupełnić %s w pliku konfiguracyjnym, aby plugin działał poprawnie. Wyłączam...", fieldName));
     }
 
 }
