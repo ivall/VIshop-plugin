@@ -1,6 +1,6 @@
 # VIshop-plugin
 Plugin łączący serwer Minecraft z itemshopem stworzonym na [VIshop.pl](https://vishop.pl/)  
-Wspierane (przetestowane przez autorów) wersje Minecrafta — od 1.8 do 1.21.4
+Wspierane (przetestowane przez autorów) wersje Minecrafta — od 1.8 do 1.21.10.
 
 Plugin przeznaczony dla platform:
 - pochodnych Bukkita (Spigot, Paper, itp.)
