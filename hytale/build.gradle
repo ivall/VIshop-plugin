@@ -1,0 +1,26 @@
+import groovy.json.JsonSlurper
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+}
+
+ext {
+    hytaleHome = "${System.getProperty("user.home")}/AppData/Roaming/Hytale"
+}
+
+dependencies {
+    implementation project(':common')
+    compileOnly (files("$hytaleHome/install/release/package/game/latest/Server/HytaleServer.jar"))
+}
+
+// Updates the manifest.json version
+tasks.register('updatePluginManifest') {
+    def manifestFile = file('src/main/resources/manifest.json')
+    doLast {
+        if (!manifestFile.exists()) {
+            throw new GradleException("Could not find manifest.json at ${manifestFile.path}!")
+        }
+        def manifestJson = new JsonSlurper().parseText(manifestFile.text)
+        manifestJson.Version = version
+    }
+}

@@ -1,17 +1,16 @@
 plugins {
     id 'java-library'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.gradleup.shadow' version '9.3.1'
 }
 
 allprojects {
     apply plugin: 'java-library'
-    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'com.gradleup.shadow'
 
     group = 'pl.vishop.plugin'
-    version = '2.4'
+    version = '2.5'
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
     compileJava.options.encoding = 'UTF-8'
     tasks.withType(JavaCompile) {
@@ -53,4 +52,5 @@ dependencies {
     implementation project(':bukkit')
     implementation project(':bungee')
     implementation project(':velocity')
+    // you have to build hytale separately
 }

@@ -1,0 +1,22 @@
+{
+  "Group": "vishop",
+  "Name": "ViShopPlugin",
+  "Version": "2.5",
+  "Description": "VIshop plugin",
+  "Authors": [
+    {
+      "Name": "ivall"
+    }
+  ],
+  "Website": "vishop.pl",
+  "ServerVersion": "*",
+  "Dependencies": {
+
+  },
+  "OptionalDependencies": {
+
+  },
+  "DisabledByDefault": false,
+  "Main": "pl.vishop.plugin.hytale.HytaleViShopPlugin",
+  "IncludesAssetPack": true
+}
