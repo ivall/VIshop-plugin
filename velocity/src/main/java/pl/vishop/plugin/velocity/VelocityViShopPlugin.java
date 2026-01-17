@@ -38,7 +38,7 @@ import pl.vishop.plugin.resource.ResourceLoaderException;
 @Plugin(
         id = "vishop",
         name = "ViShopPlugin",
-        version = "2.5",
+        version = "2.4",
         description = "Wykonuj zamówienia ze swojego sklepu ViShop",
         url = "https://vishop.pl/",
         authors = "VIshop-plugin Contributors"

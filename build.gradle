@@ -8,7 +8,7 @@ allprojects {
     apply plugin: 'com.gradleup.shadow'
 
     group = 'pl.vishop.plugin'
-    version = '2.5'
+    version = '2.4'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
