@@ -5,8 +5,21 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
+def os = org.gradle.internal.os.OperatingSystem.current()
+
 ext {
-    hytaleHome = "${System.getProperty("user.home")}/AppData/Roaming/Hytale"
+    if (os.isWindows()) {
+        hytaleHome = "${System.getenv("APPDATA")}/Hytale"
+    } else if (os.isMacOsX()) {
+        hytaleHome = "${System.getProperty("user.home")}/Library/Application Support/Hytale"
+    } else {
+        def xdgDataHome = System.getenv("XDG_DATA_HOME")
+        if (xdgDataHome != null && !xdgDataHome.isBlank()) {
+            hytaleHome = "${xdgDataHome}/Hytale"
+        } else {
+            hytaleHome = "${System.getProperty("user.home")}/.local/share/Hytale"
+        }
+    }
 }
 
 dependencies {
