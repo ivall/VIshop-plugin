@@ -17,52 +17,60 @@
 
 package pl.vishop.plugin.hytale;
 
+import org.yaml.snakeyaml.Yaml;
 import pl.vishop.plugin.config.ConfigLoader;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Properties;
+import java.util.Map;
 
 public class HytaleConfigLoader implements ConfigLoader {
 
-    private final Properties properties;
+    private final Map<String, Object> config;
 
     public HytaleConfigLoader(final Path configDirectory) throws IOException {
-        this.properties = new Properties();
-
         Files.createDirectories(configDirectory);
-        Path configFile = configDirectory.resolve("config.properties");
+
+        Path configFile = configDirectory.resolve("config.yml");
 
         if (!Files.exists(configFile)) {
-            this.createDefaultConfig(configFile);
+            copyDefaultConfig(configFile);
         }
 
         try (InputStream input = Files.newInputStream(configFile)) {
-            this.properties.load(input);
+            Yaml yaml = new Yaml();
+            this.config = yaml.load(input);
         }
     }
 
-    private void createDefaultConfig(final Path configFile) throws IOException {
-        try (OutputStream output = Files.newOutputStream(configFile)) {
-            Properties defaults = new Properties();
-            defaults.setProperty("apiKey", "");
-            defaults.setProperty("shopId", "");
-            defaults.setProperty("serverId", "");
-            defaults.setProperty("debug", "false");
+    private void copyDefaultConfig(final Path target) throws IOException {
+        try (InputStream input = HytaleConfigLoader.class.getClassLoader().getResourceAsStream("config.yml")) {
 
-            defaults.store(output, "VIshop");
+            if (input == null) {
+                throw new IOException("Brak config.yml w jar");
+            }
+
+            Files.copy(input, target);
         }
     }
 
     @Override
     public boolean getBoolean(final String key) {
-        return Boolean.parseBoolean(this.properties.getProperty(key, "false"));
+        Object value = this.config.get(key);
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value instanceof String) {
+            return Boolean.parseBoolean((String) value);
+        }
+        return false;
     }
 
     @Override
     public String getString(final String key) {
-        return this.properties.getProperty(key, null);
+        Object value = this.config.get(key);
+        return value != null ? value.toString() : null;
     }
-
 }

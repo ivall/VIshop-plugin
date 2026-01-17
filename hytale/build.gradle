@@ -24,6 +24,7 @@ ext {
 
 dependencies {
     implementation project(':common')
+    implementation "org.yaml:snakeyaml:2.5"
     compileOnly (files("$hytaleHome/install/release/package/game/latest/Server/HytaleServer.jar"))
 }
 
