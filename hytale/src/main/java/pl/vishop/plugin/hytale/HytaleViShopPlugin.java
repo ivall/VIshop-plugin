@@ -39,4 +39,10 @@ public class HytaleViShopPlugin extends JavaPlugin {
         );
     }
 
+    @Override
+    protected void shutdown() {
+        HytaleServer.SCHEDULED_EXECUTOR.shutdown();
+        this.httpClient.dispatcher().executorService().shutdown();
+    }
+
 }

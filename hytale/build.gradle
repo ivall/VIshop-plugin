@@ -1,3 +1,4 @@
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 java {
@@ -22,5 +23,10 @@ tasks.register('updatePluginManifest') {
         }
         def manifestJson = new JsonSlurper().parseText(manifestFile.text)
         manifestJson.Version = version
+        manifestFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(manifestJson))
     }
+}
+
+tasks.named('processResources') {
+    dependsOn 'updatePluginManifest'
 }
