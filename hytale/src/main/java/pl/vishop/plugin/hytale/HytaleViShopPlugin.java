@@ -20,14 +20,15 @@ package pl.vishop.plugin.hytale;
 import com.hypixel.hytale.server.core.HytaleServer;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
-import com.hypixel.hytale.server.core.plugin.PluginManager;
 import okhttp3.OkHttpClient;
+import org.spongepowered.configurate.ConfigurationNode;
 import pl.vishop.plugin.config.Config;
 import pl.vishop.plugin.config.EmptyConfigFieldException;
 import pl.vishop.plugin.logger.ViShopLogger;
+import pl.vishop.plugin.resource.ResourceLoader;
+import pl.vishop.plugin.resource.ResourceLoaderException;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class HytaleViShopPlugin extends JavaPlugin {
@@ -41,19 +42,29 @@ public class HytaleViShopPlugin extends JavaPlugin {
 
     @Override
     protected void setup() {
-        Config config;
+        final ResourceLoader<ConfigurationNode> resourceLoader = new HytaleResourceLoader(this.getClass(), getDataDirectory());
         try {
-            config = new Config(new HytaleConfigLoader(getDataDirectory()));
-        } catch (EmptyConfigFieldException | IOException exception) {
-            logger.error(exception.getMessage());
-            PluginManager.get().unload(this.getIdentifier());
-            return;
-        }
+            if (resourceLoader.saveDefault("config.yml")) {
+                this.logger.info("Domyślny plik config.yml zapisany, skonfiguruj go i zrestartuj proxy");
+                return;
+            }
 
-        HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(
-                new HytaleOrderTask(this.httpClient, config, logger),
-                0, 30, TimeUnit.SECONDS
-        );
+            try {
+                final ConfigurationNode cfgFile = resourceLoader.load("config.yml");
+                final Config config = new Config(new HytaleConfigLoader(cfgFile));
+
+                HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(
+                        new HytaleOrderTask(this.httpClient, config, logger),
+                        0, config.taskInterval.getSeconds(), TimeUnit.SECONDS
+                );
+
+            } catch (final EmptyConfigFieldException exception) {
+                this.logger.error(exception.getMessage());
+            }
+        } catch (final ResourceLoaderException exception) {
+            this.logger.error(exception.getReason().getMessage("config.yml"));
+            this.logger.error("Przyczyna: " + exception.getCause().getMessage());
+        }
     }
 
     @Override

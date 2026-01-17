@@ -17,60 +17,25 @@
 
 package pl.vishop.plugin.hytale;
 
-import org.yaml.snakeyaml.Yaml;
+import org.spongepowered.configurate.ConfigurationNode;
 import pl.vishop.plugin.config.ConfigLoader;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
 
 public class HytaleConfigLoader implements ConfigLoader {
 
-    private final Map<String, Object> config;
+    private final ConfigurationNode configFile;
 
-    public HytaleConfigLoader(final Path configDirectory) throws IOException {
-        Files.createDirectories(configDirectory);
-
-        Path configFile = configDirectory.resolve("config.yml");
-
-        if (!Files.exists(configFile)) {
-            copyDefaultConfig(configFile);
-        }
-
-        try (InputStream input = Files.newInputStream(configFile)) {
-            Yaml yaml = new Yaml();
-            this.config = yaml.load(input);
-        }
-    }
-
-    private void copyDefaultConfig(final Path target) throws IOException {
-        try (InputStream input = HytaleConfigLoader.class.getClassLoader().getResourceAsStream("config.yml")) {
-
-            if (input == null) {
-                throw new IOException("Brak config.yml w jar");
-            }
-
-            Files.copy(input, target);
-        }
+    public HytaleConfigLoader(final ConfigurationNode configFile) {
+        this.configFile = configFile;
     }
 
     @Override
     public boolean getBoolean(final String key) {
-        Object value = this.config.get(key);
-        if (value instanceof Boolean) {
-            return (Boolean) value;
-        }
-        if (value instanceof String) {
-            return Boolean.parseBoolean((String) value);
-        }
-        return false;
+        return this.configFile.node(key).getBoolean();
     }
 
     @Override
     public String getString(final String key) {
-        Object value = this.config.get(key);
-        return value != null ? value.toString() : null;
+        return this.configFile.node(key).getString();
     }
+
 }
