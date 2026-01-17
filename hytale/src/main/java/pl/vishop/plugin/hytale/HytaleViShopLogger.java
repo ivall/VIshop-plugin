@@ -22,11 +22,11 @@ import pl.vishop.plugin.logger.ViShopLogger;
 
 import java.util.logging.Level;
 
-public class HytaleVishopLogger implements ViShopLogger {
+public class HytaleViShopLogger implements ViShopLogger {
 
     private final HytaleLogger logger;
 
-    public HytaleVishopLogger(final HytaleLogger logger) {
+    public HytaleViShopLogger(final HytaleLogger logger) {
         this.logger = logger;
     }
 

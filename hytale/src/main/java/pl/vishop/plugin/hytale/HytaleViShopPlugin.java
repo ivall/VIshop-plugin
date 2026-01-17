@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class HytaleViShopPlugin extends JavaPlugin {
 
     private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
-    final ViShopLogger logger = new HytaleVishopLogger(getLogger());
+    final ViShopLogger logger = new HytaleViShopLogger(getLogger());
 
     public HytaleViShopPlugin(@Nonnull JavaPluginInit init) {
         super(init);
