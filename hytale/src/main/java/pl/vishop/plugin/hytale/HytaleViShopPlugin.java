@@ -45,7 +45,7 @@ public class HytaleViShopPlugin extends JavaPlugin {
         final ResourceLoader<ConfigurationNode> resourceLoader = new HytaleResourceLoader(this.getClass(), getDataDirectory());
         try {
             if (resourceLoader.saveDefault("config.yml")) {
-                this.logger.info("Domyślny plik config.yml zapisany, skonfiguruj go i zrestartuj proxy");
+                this.logger.info("Domyślny plik config.yml zapisany, skonfiguruj go i zrestartuj serwer");
                 return;
             }
 
